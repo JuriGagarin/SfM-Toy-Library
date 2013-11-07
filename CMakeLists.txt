@@ -10,7 +10,7 @@ find_package(OpenGL)
 add_subdirectory(SfMToyLib)
 
 ############### Find Eigen ###############
-find_package(Eigen3 REQUIRED)
+find_package(Eigen3 3.1.2 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 ###########################################
 
@@ -24,19 +24,16 @@ IF(USE_GUI)
 ENDIF(USE_GUI)
 
 IF(USE_QT)
-	########## Qt stuff ##########
-	find_package(Qt4 REQUIRED QtGui QtOpenGL QtXml)
-	
-	ADD_DEFINITIONS(${QT_DEFINITIONS})
-	include_directories(${QT_INCLUDES})
-	include(${QT_USE_FILE}) 
-	
-	QT4_WRAP_UI( MY_UI_HDRS sfmtoy.ui )
-	QT4_WRAP_CPP( MY_MOC_SRCS ViewerInterface.h sfmviewer.h )
-	SOURCE_GROUP(QT_MOC_SRCS FILES ${MY_MOC_SRCS})
-	
-	INCLUDE_DIRECTORIES( ${CMAKE_BINARY_DIR} ) #qt wrapping creates some sources
-	######### End Qt Stuff #########
+	########## Qt5 stuff ##########
+	find_package(Qt5Widgets REQUIRED)
+	# Instruct CMake to run moc automatically when needed.
+	set(CMAKE_AUTOMOC ON)
+
+	# Find includes in corresponding build directories
+	set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+	QT5_WRAP_UI(MY_UI_HDRS sfmtoy.ui)
+	######### End Qt5 Stuff #########
 	
 	############### Find LibQGLViewer ###############
 	set(QGLVIEWER_DIR_HINT "" CACHE PATH "libQGLViewer directory")
@@ -85,6 +82,9 @@ add_executable(SfMToyUI
 	${MY_MOC_SRCS}
 	main.cpp
 	)
+IF(USE_QT)
+	qt5_use_modules(SfMToyUI Gui Widgets OpenGL Xml)
+ENDIF(USE_QT)
 
 target_link_libraries(SfMToyUI 
 	SfMToyLibrary

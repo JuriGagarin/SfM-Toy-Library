@@ -93,3 +93,8 @@ local.properties
 # PDT-specific
 .buildpath
 
+# QT stuff
+*.user
+
+# Linux Text Editor
+*~
