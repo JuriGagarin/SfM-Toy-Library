@@ -43,7 +43,10 @@ void SFMViewer::update(std::vector<cv::Point3d> pcld,
 
 }
 
-void SFMViewer::run() { distance->RecoverDepthFromImages(); }
+void SFMViewer::run()
+{
+    distance->RecoverDepthFromImages();
+}
 
 void SFMViewer::openDirectory() {
     images.clear();images_names.clear();
@@ -120,8 +123,7 @@ void SFMViewer::updatePointCloud(std::vector<cv::Point3d> pcld, std::vector<cv::
         m_cameras_transforms[i] =
                 Eigen::Translation<double, 3>(c) *
                 Eigen::Quaterniond(R) *
-                Eigen::UniformScaling<double>(scale_cameras_down)
-                ;
+                Eigen::UniformScaling<double>(scale_cameras_down);
     }
 
     m_global_transform = Eigen::Translation<double,3>(-c_sum / (double)(m_cameras.size()));
@@ -155,9 +157,9 @@ void SFMViewer::draw() {
 
         glColor4f(1, 0, 0, 1);
         QGLViewer::drawArrow(qglviewer::Vec(0,0,0), qglviewer::Vec(3,0,0));
-	    glColor4f(0, 1, 0, 1);
+        glColor4f(0, 1, 0, 1);
 	    QGLViewer::drawArrow(qglviewer::Vec(0,0,0), qglviewer::Vec(0,3,0));
-	    glColor4f(0, 0, 1, 1);
+        glColor4f(0, 0, 1, 1);
 	    QGLViewer::drawArrow(qglviewer::Vec(0,0,0), qglviewer::Vec(0,0,3));
 
 	    glPopMatrix();

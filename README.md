@@ -8,7 +8,7 @@ Prerequisite
 - OpenCV: http://www.opencv.org
 - Eigen3: http://eigen.tuxfamily.org/index.php?title=Main_Page
 - OPTIONAL: SSBA & Sparsesuite: http://www.inf.ethz.ch/personal/chzach/opensource.html (bundeled with the library in the '3rdparty' directory) (Now optional when using the USE_SSBA=OFF option)
-- OPTIONAL: Qt 4.8.x (for 3D visualization and GUI) and libQGLViewer: http://www.libqglviewer.com/
+- OPTIONAL: Qt 5.x (for 3D visualization and GUI) and libQGLViewer: http://www.libqglviewer.com/
 
 ### How to make
 
