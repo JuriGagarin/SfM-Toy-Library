@@ -20,7 +20,9 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     //TODO stop recovery thread
-    _recoveryThread.join();
+    if(_recoveryThread.joinable()) {
+        _recoveryThread.join();
+    }
     delete _ui;
 }
 
