@@ -32,7 +32,7 @@ IF(USE_QT)
 	# Find includes in corresponding build directories
 	set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-	QT5_WRAP_UI(MY_UI_HDRS sfmtoy.ui)
+	QT5_WRAP_UI(MY_UI_HDRS mainwindow.ui)
 	######### End Qt5 Stuff #########
 	
 	############### Find LibQGLViewer ###############
@@ -62,6 +62,7 @@ IF(APPLE)
 ENDIF(APPLE)
 
 set( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D__SFM__DEBUG__" )
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11") # for gcc >= 4.7 (use c++11)
 
 if(OPENMP_FOUND)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} -DHAVE_OPENMP")
@@ -76,8 +77,8 @@ include_directories(
 
 # GUI part
 add_executable(SfMToyUI 
-	ViewerInterface.h ViewerInterface.cpp
-	sfmviewer.h sfmviewer.cpp
+	mainwindow.h mainwindow.cpp
+        sfmwidget.h sfmwidget.cpp
 	${MY_UI_HDRS}
 	${MY_MOC_SRCS}
 	main.cpp
