@@ -39,7 +39,7 @@ void SFMWidget::draw()
     glDisable(GL_LIGHTING);
     glBegin(GL_POINTS);
     for (int i = 0; i < _pcld.size(); ++i) {
-        glColor3b(_pcldrgb[i][0],_pcldrgb[i][1],_pcldrgb[i][2]);
+        glColor3ub(_pcldrgb[i][0],_pcldrgb[i][1],_pcldrgb[i][2]);
         glVertex3dv(&(_pcld[i].x));
     }
     glEnd();
