@@ -46,6 +46,7 @@ public slots:
                           std::vector<cv::Point3d> pcld_alternate,
                           std::vector<cv::Vec3b> pcldrgb_alternate,
                           std::vector<cv::Matx34d> cameras);
+    void setScale(int scaleValue);
     void clearData();
 
 };

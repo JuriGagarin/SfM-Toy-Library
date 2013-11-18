@@ -13,6 +13,7 @@ SFMWidget::SFMWidget(QWidget *parent) :
     setSceneBoundingBox(qglviewer::Vec(-50,-50,-50), qglviewer::Vec(50,50,50));
     showEntireScene();
     setFPSIsDisplayed(true);
+
 }
 
 void SFMWidget::update(std::vector<cv::Point3d> pcld, std::vector<cv::Vec3b> pcldrgb, std::vector<cv::Point3d> pcld_alternate, std::vector<cv::Vec3b> pcldrgb_alternate, std::vector<cv::Matx34d> cameras)
@@ -30,6 +31,7 @@ void SFMWidget::update(std::vector<cv::Point3d> pcld, std::vector<cv::Vec3b> pcl
 void SFMWidget::draw()
 {
     glPushMatrix();
+    //BUG scaling is not zooming, use qglviewer zoom function instead
     glScaled(_vizScale,_vizScale,_vizScale);
     glMultMatrixd(_globalTransform.data());
 
@@ -107,11 +109,18 @@ void SFMWidget::updatePointCloud(std::vector<cv::Point3d> pcld, std::vector<cv::
     updateGL();
 }
 
+void SFMWidget::setScale(int scaleValue)
+{
+    _vizScale = static_cast<float>(scaleValue);
+    updateGL();
+}
+
 void SFMWidget::clearData()
 {
     _pcld.clear();
     _pcldrgb.clear();
     _cameras.clear();
     _camerasTransforms.clear();
+    _vizScale = 1.0;
     updateGL();
 }

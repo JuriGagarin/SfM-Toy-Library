@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _distance = new MultiCameraPnP();
     _distance->attach(_ui->sfmWidget);
 
+    connect(_ui->horizontalSlider_scale, SIGNAL(sliderMoved(int)), _ui->sfmWidget, SLOT(setScale(int)));
 }
 
 MainWindow::~MainWindow()
@@ -30,14 +31,9 @@ void MainWindow::on_pushButton_runSFM_clicked()
 {
     _distance->use_gpu = _ui->checkBox_useGPU->isChecked();
     _distance->use_rich_features = _ui->checkBox_useRich->isChecked();
-    qDebug() << "run SFM";
     _ui->sfmWidget->clearData();
-//    std::thread recoveryThread(_distance->RecoverDepthFromImages);
-
     _recoveryThread = std::thread([&]() {_distance->RecoverDepthFromImages();});
 
-//    t.join();
-//    _distance->RecoverDepthFromImages();
 }
 
 void MainWindow::on_pushButton_openDirectory_clicked()
@@ -73,11 +69,11 @@ void MainWindow::openDirectory()
 
     std::string imgs_path = QFileDialog::getExistingDirectory(this, tr("Open Images Directory"), ".").toStdString();
 
-    const double scale_factor = _ui->doubleSpinBox_scaleFactor->value();
+    const double scaleFactor = _ui->doubleSpinBox_scaleFactor->value();
 
-    qDebug() << "Downscale image to: " << scale_factor;
+    qDebug() << "Downscale image to: " << scaleFactor;
 
-    open_imgs_dir(imgs_path.c_str(), _images, _imageNames, scale_factor);
+    open_imgs_dir(imgs_path.c_str(), _images, _imageNames, scaleFactor);
 
     if(_images.empty()) {
         qWarning() << "can't get image files";
@@ -86,8 +82,6 @@ void MainWindow::openDirectory()
         _distance->setImages(_images,_imageNames,imgs_path);
         _ui->pushButton_runSFM->setEnabled(true);
     }
-
-
 }
 
 bool MainWindow::isGPUSupported()
