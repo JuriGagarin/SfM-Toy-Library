@@ -9,6 +9,8 @@
 #include <thread>
 
 #include "MultiCameraPnP.h"
+#include <opencv2/opencv.hpp>
+#include <Eigen/Eigen>
 
 
 namespace Ui {
@@ -24,7 +26,18 @@ public:
     ~MainWindow();
 
     void openDirectory();
+
+    //TODO move these functions to a more suitable class
     static bool isGPUSupported();
+    static bool isOpenMPEnabled();
+    static bool isSSBAEnabled();
+
+
+    static QString convertToString(bool value);
+
+public slots:
+    void setStatusBarText(QString text);
+
 private slots:
     void on_pushButton_runSFM_clicked();
 
@@ -37,6 +50,8 @@ private slots:
     void on_actionOpen_triggered();
 
     void on_actionAbout_triggered();
+
+    void setNrOfImages(int nr);
 
 private:
     Ui::MainWindow *_ui;

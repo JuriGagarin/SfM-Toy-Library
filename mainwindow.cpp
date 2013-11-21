@@ -11,7 +11,6 @@ MainWindow::MainWindow(QWidget *parent) :
     _ui->checkBox_useGPU->setChecked(gpuSupport);
     _ui->checkBox_useGPU->setEnabled(gpuSupport);
 
-
     _distance = new MultiCameraPnP();
     _distance->attach(_ui->sfmWidget);
 
@@ -53,8 +52,20 @@ void MainWindow::on_actionAbout_Qt_triggered()
 
 void MainWindow::on_actionAbout_triggered()
 {
+    const QString opencvVersion = "OpenCV\t\t" + QString(CV_VERSION);
+    const QString qtVersion = "Qt\t\t" + QString(QT_VERSION_STR);
+    const QString eigenVersion = "Eigen\t\t" + QString::number(EIGEN_WORLD_VERSION) + "." + QString::number(EIGEN_MAJOR_VERSION) + "." + QString::number(EIGEN_MINOR_VERSION);
+    const QString openMPenabled = "OpenMP\t\t" + convertToString(isOpenMPEnabled());
+    const QString opencvGPUenabled = "OpenCV (GPU)\t" + convertToString(isGPUSupported());
+    const QString ssbaEnabled = "SSBA\t\t" + convertToString(isSSBAEnabled());
     //TODO write a useful description
-    QMessageBox::about(this, "SfMToyViewer", "SfMToy Lib ...");
+    QString aboutString = "SfMToy Lib ..." + QString("\n") + qtVersion + QString("\n") +opencvVersion + QString("\n") + eigenVersion + QString("\n") + openMPenabled + QString("\n") + opencvGPUenabled  + QString("\n") + ssbaEnabled;
+    QMessageBox::about(this, "SfMToyViewer", aboutString);
+}
+
+void MainWindow::setNrOfImages(int nr)
+{
+    _ui->label_nrOfImages->setText(QString::number(nr) + " images loaded");
 }
 
 void MainWindow::on_actionExit_triggered()
@@ -69,18 +80,23 @@ void MainWindow::openDirectory()
 
     std::string imgs_path = QFileDialog::getExistingDirectory(this, tr("Open Images Directory"), ".").toStdString();
 
-    const double scaleFactor = _ui->doubleSpinBox_scaleFactor->value();
+    if(!imgs_path.empty()) {
 
-    qDebug() << "Downscale image to: " << scaleFactor;
+        const double scaleFactor = _ui->doubleSpinBox_scaleFactor->value();
 
-    open_imgs_dir(imgs_path.c_str(), _images, _imageNames, scaleFactor);
+        qDebug() << "Downscale image to: " << scaleFactor;
 
-    if(_images.empty()) {
-        qWarning() << "can't get image files";
-        _ui->pushButton_runSFM->setEnabled(false);
-    } else {
-        _distance->setImages(_images,_imageNames,imgs_path);
-        _ui->pushButton_runSFM->setEnabled(true);
+        open_imgs_dir(imgs_path.c_str(), _images, _imageNames, scaleFactor);
+
+        setNrOfImages(_images.size());
+
+        if(_images.empty()) {
+            qWarning() << "can't get image files";
+            _ui->pushButton_runSFM->setEnabled(false);
+        } else {
+            _distance->setImages(_images,_imageNames,imgs_path);
+            _ui->pushButton_runSFM->setEnabled(true);
+        }
     }
 }
 
@@ -90,4 +106,33 @@ bool MainWindow::isGPUSupported()
     return true;
 #endif
     return false;
+}
+
+bool MainWindow::isOpenMPEnabled()
+{
+#ifdef _OPENMP
+    return true;
+#endif
+    return false;
+}
+
+bool MainWindow::isSSBAEnabled()
+{
+#ifdef HAVE_SSBA
+    return true;
+#endif
+    return false;
+}
+
+QString MainWindow::convertToString(bool value)
+{
+    if(value) {
+        return "YES";
+    }
+    return "NO";
+}
+
+void MainWindow::setStatusBarText(QString text)
+{
+    _ui->statusBar->showMessage(text);
 }

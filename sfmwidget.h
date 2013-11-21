@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QGLViewer/qglviewer.h>
 #include <QDebug>
+#include <QMouseEvent>
 #include <Eigen/Eigen>
 
 #include <opencv2/core/core.hpp>
@@ -28,10 +29,12 @@ public:
             std::vector<cv::Matx34d> cameras);
 protected:
     virtual void draw();
+    virtual void mousePressEvent(QMouseEvent* e);
 
 private:
     float _vizScale;
     double _scaleCamerasDown;
+    bool _drawCameras;
     Eigen::Affine3d _globalTransform;
     std::vector<cv::Point3d> _pcld;
     std::vector<cv::Vec3b> _pcldrgb;

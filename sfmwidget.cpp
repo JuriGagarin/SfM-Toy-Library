@@ -1,7 +1,7 @@
 #include "sfmwidget.h"
 
 SFMWidget::SFMWidget(QWidget *parent) :
-    QGLViewer(parent), _vizScale(1.0)
+    QGLViewer(parent), _vizScale(1.0), _drawCameras(true)
 {
 
     //register QMetaTypes for Invoking
@@ -35,6 +35,7 @@ void SFMWidget::draw()
     glScaled(_vizScale,_vizScale,_vizScale);
     glMultMatrixd(_globalTransform.data());
 
+    //draw pointcloud
     glPushAttrib(GL_ENABLE_BIT);
     glDisable(GL_LIGHTING);
     glBegin(GL_POINTS);
@@ -44,26 +45,39 @@ void SFMWidget::draw()
     }
     glEnd();
 
-    //	glScaled(scale_cameras_down,scale_cameras_down,scale_cameras_down);
+    //draw cameras
     glEnable(GL_RESCALE_NORMAL);
     glEnable(GL_LIGHTING);
-    for (int i = 0; i < _camerasTransforms.size(); ++i) {
+    if(_drawCameras) {
+        for(const Eigen::Affine3d& affine : _camerasTransforms) {
 
-        glPushMatrix();
-        glMultMatrixd(_camerasTransforms[i].data());
+            glPushMatrix();
+            glMultMatrixd(affine.data());
 
-        glColor4f(1, 0, 0, 1);
-        QGLViewer::drawArrow(qglviewer::Vec(0,0,0), qglviewer::Vec(3,0,0));
-        glColor4f(0, 1, 0, 1);
-        QGLViewer::drawArrow(qglviewer::Vec(0,0,0), qglviewer::Vec(0,3,0));
-        glColor4f(0, 0, 1, 1);
-        QGLViewer::drawArrow(qglviewer::Vec(0,0,0), qglviewer::Vec(0,0,3));
+            glColor4f(1, 0, 0, 1);
+            QGLViewer::drawArrow(qglviewer::Vec(0,0,0), qglviewer::Vec(3,0,0));
+            glColor4f(0, 1, 0, 1);
+            QGLViewer::drawArrow(qglviewer::Vec(0,0,0), qglviewer::Vec(0,3,0));
+            glColor4f(0, 0, 1, 1);
+            QGLViewer::drawArrow(qglviewer::Vec(0,0,0), qglviewer::Vec(0,0,3));
 
-        glPopMatrix();
+            glPopMatrix();
+        }
     }
 
     glPopAttrib();
     glPopMatrix();
+}
+
+void SFMWidget::mousePressEvent(QMouseEvent *e)
+{
+    if ((e->button() == Qt::RightButton) && (e->modifiers() == Qt::NoButton)) {
+        //TODO add custom menu here
+        qDebug() << "Right mouse button";
+        e->accept();
+    } else {
+        QGLViewer::mousePressEvent(e);
+    }
 }
 
 void SFMWidget::updatePointCloud(std::vector<cv::Point3d> pcld, std::vector<cv::Vec3b> pcldrgb, std::vector<cv::Point3d> pcld_alternate, std::vector<cv::Vec3b> pcldrgb_alternate, std::vector<cv::Matx34d> cameras)

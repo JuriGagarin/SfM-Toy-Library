@@ -122,6 +122,13 @@
              </widget>
             </item>
             <item>
+             <widget class="QLabel" name="label_nrOfImages">
+              <property name="text">
+               <string>0 images loaded</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <layout class="QHBoxLayout" name="horizontalLayout">
               <item>
                <widget class="QLabel" name="label">
