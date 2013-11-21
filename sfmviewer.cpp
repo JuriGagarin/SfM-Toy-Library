@@ -128,58 +128,58 @@ void SFMViewer::updatePointCloud(std::vector<cv::Point3d> pcld, std::vector<cv::
         scale_cameras_down = 1.0 / (3.0 * sqrt(pca.eigenvalues.at<double> (0)));
 //		std::cout << "emean " << mean << std::endl;
 //		m_global_transform = Eigen::Translation<double,3>(-Eigen::Map<Eigen::Vector3d>(mean[0]));
-    }
+	}
 
-    //compute transformation to place cameras in world
-    m_cameras_transforms.resize(m_cameras.size());
-    Eigen::Vector3d c_sum(0,0,0);
-    for (int i = 0; i < m_cameras.size(); ++i) {
-        Eigen::Matrix<double, 3, 4> P = Eigen::Map<Eigen::Matrix<double, 3, 4,
-                Eigen::RowMajor> >(m_cameras[i].val);
-        Eigen::Matrix3d R = P.block(0, 0, 3, 3);
-        Eigen::Vector3d t = P.block(0, 3, 3, 1);
-        Eigen::Vector3d c = -R.transpose() * t;
-        c_sum += c;
-        m_cameras_transforms[i] =
-                Eigen::Translation<double, 3>(c) *
-                Eigen::Quaterniond(R) *
-                Eigen::UniformScaling<double>(scale_cameras_down);
-    }
+	//compute transformation to place cameras in world
+	m_cameras_transforms.resize(m_cameras.size());
+	Eigen::Vector3d c_sum(0,0,0);
+	for (int i = 0; i < m_cameras.size(); ++i) {
+		Eigen::Matrix<double, 3, 4> P = Eigen::Map<Eigen::Matrix<double, 3, 4,
+				Eigen::RowMajor> >(m_cameras[i].val);
+		Eigen::Matrix3d R = P.block(0, 0, 3, 3);
+		Eigen::Vector3d t = P.block(0, 3, 3, 1);
+		Eigen::Vector3d c = -R.transpose() * t;
+		c_sum += c;
+		m_cameras_transforms[i] =
+				Eigen::Translation<double, 3>(c) *
+				Eigen::Quaterniond(R) *
+				Eigen::UniformScaling<double>(scale_cameras_down)
+				;
+	}
 
-    m_global_transform = Eigen::Translation<double,3>(-c_sum / (double)(m_cameras.size()));
+	m_global_transform = Eigen::Translation<double,3>(-c_sum / (double)(m_cameras.size()));
 //	m_global_transform = m_cameras_transforms[0].inverse();
 
-    updateGL();
+	updateGL();
 }
 
 void SFMViewer::draw() {
+	glPushMatrix();
+	glScaled(vizScale,vizScale,vizScale);
+	glMultMatrixd(m_global_transform.data());
 
-    glPushMatrix();
-    glScaled(vizScale,vizScale,vizScale);
-    glMultMatrixd(m_global_transform.data());
+	glPushAttrib(GL_ENABLE_BIT);
+	glDisable(GL_LIGHTING);
+	glBegin(GL_POINTS);
+	for (int i = 0; i < m_pcld.size(); ++i) {
+        glColor3ub(m_pcldrgb[i][0],m_pcldrgb[i][1],m_pcldrgb[i][2]);
+		glVertex3dv(&(m_pcld[i].x));
+	}
+	glEnd();
 
-    glPushAttrib(GL_ENABLE_BIT);
-    glDisable(GL_LIGHTING);
-    glBegin(GL_POINTS);
-    for (int i = 0; i < m_pcld.size(); ++i) {
-        glColor3b(m_pcldrgb[i][0],m_pcldrgb[i][1],m_pcldrgb[i][2]);
-        glVertex3dv(&(m_pcld[i].x));
-    }
-    glEnd();
+//	glScaled(scale_cameras_down,scale_cameras_down,scale_cameras_down);
+	glEnable(GL_RESCALE_NORMAL);
+	glEnable(GL_LIGHTING);
+	for (int i = 0; i < m_cameras_transforms.size(); ++i) {
 
-    //	glScaled(scale_cameras_down,scale_cameras_down,scale_cameras_down);
-    glEnable(GL_RESCALE_NORMAL);
-    glEnable(GL_LIGHTING);
-    for (int i = 0; i < m_cameras_transforms.size(); ++i) {
+		glPushMatrix();
+		glMultMatrixd(m_cameras_transforms[i].data());
 
-        glPushMatrix();
-        glMultMatrixd(m_cameras_transforms[i].data());
-
-        glColor4f(1, 0, 0, 1);
-        QGLViewer::drawArrow(qglviewer::Vec(0,0,0), qglviewer::Vec(3,0,0));
-        glColor4f(0, 1, 0, 1);
+	    glColor4f(1, 0, 0, 1);
+	    QGLViewer::drawArrow(qglviewer::Vec(0,0,0), qglviewer::Vec(3,0,0));
+	    glColor4f(0, 1, 0, 1);
 	    QGLViewer::drawArrow(qglviewer::Vec(0,0,0), qglviewer::Vec(0,3,0));
-        glColor4f(0, 0, 1, 1);
+	    glColor4f(0, 0, 1, 1);
 	    QGLViewer::drawArrow(qglviewer::Vec(0,0,0), qglviewer::Vec(0,0,3));
 
 	    glPopMatrix();
@@ -199,5 +199,3 @@ void SFMViewer::init() {
 
 	showEntireScene();
 }
-
-
