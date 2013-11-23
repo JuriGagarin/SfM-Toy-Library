@@ -34,22 +34,7 @@ IF(USE_QT)
 
 	QT5_WRAP_UI(MY_UI_HDRS mainwindow.ui)
 	######### End Qt5 Stuff #########
-	
-	############### Find LibQGLViewer ###############
-	set(QGLVIEWER_DIR_HINT "" CACHE PATH "libQGLViewer directory")
-	FIND_LIBRARY(QGLVIEWER_LIB QGLViewer2 PATHS ${QGLVIEWER_DIR_HINT} "${QGLVIEWER_DIR_HINT}/QGLViewer/release")
-	IF(NOT QGLVIEWER_LIB)
-	    FIND_LIBRARY(QGLVIEWER_LIB QGLViewer PATHS ${QGLVIEWER_DIR_HINT} "${QGLVIEWER_DIR_HINT}/QGLViewer/release")
-	ENDIF()
-	IF(NOT QGLVIEWER_LIB)
-	   message(FATAL_ERROR "QGLVIEWER not found")
-	ENDIF(NOT QGLVIEWER_LIB)
-	find_path(QGLVIEWER_INCLUDE "QGLViewer/qglviewer.h" PATHS ${QGLVIEWER_DIR_HINT})
-	if(NOT QGLVIEWER_INCLUDE)
-		message(FATAL_ERROR "QGLViewer includes not found")
-	ENDIF(NOT QGLVIEWER_INCLUDE)
-	include_directories(${QGLVIEWER_INCLUDE})
-	############################################
+
 ENDIF(USE_QT)
 
 IF(APPLE)
@@ -91,7 +76,6 @@ target_link_libraries(SfMToyUI
 	SfMToyLibrary
 	${OpenCV_LIBS}
 	${QT_LIBRARIES} 
-	${QGLVIEWER_LIB}
 	${OPENGL_LIBRARIES}
 	)
 
