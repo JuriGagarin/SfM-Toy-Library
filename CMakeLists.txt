@@ -64,6 +64,8 @@ include_directories(
 add_executable(SfMToyUI 
 	mainwindow.h mainwindow.cpp
         sfmwidget.h sfmwidget.cpp
+        thumbnailwidget.h thumbnailwidget.cpp
+        converter.h
 	${MY_UI_HDRS}
 	${MY_MOC_SRCS}
 	main.cpp

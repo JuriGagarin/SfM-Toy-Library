@@ -96,6 +96,7 @@ void MainWindow::openDirectory()
         } else {
             _distance->setImages(_images,_imageNames,imgs_path);
             _ui->pushButton_runSFM->setEnabled(true);
+            _ui->thumbnailWidget->setImages(_images, _imageNames);
         }
     }
 }

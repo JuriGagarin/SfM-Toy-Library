@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>568</width>
-    <height>419</height>
+    <width>605</width>
+    <height>558</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -282,20 +282,7 @@
           </widget>
          </item>
          <item>
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
+          <widget class="ThumbnailWidget" name="thumbnailWidget"/>
          </item>
         </layout>
        </item>
@@ -309,7 +296,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>568</width>
+     <width>605</width>
      <height>27</height>
     </rect>
    </property>
@@ -359,6 +346,11 @@
    <extends>QWidget</extends>
    <header>sfmwidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ThumbnailWidget</class>
+   <extends>QListWidget</extends>
+   <header>thumbnailwidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
