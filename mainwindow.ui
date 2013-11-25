@@ -282,7 +282,17 @@
           </widget>
          </item>
          <item>
-          <widget class="ThumbnailWidget" name="thumbnailWidget"/>
+          <widget class="ThumbnailWidget" name="thumbnailWidget">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Sunken</enum>
+           </property>
+           <property name="dragDropMode">
+            <enum>QAbstractItemView::DropOnly</enum>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -328,14 +338,14 @@
     <string>About</string>
    </property>
   </action>
-  <action name="actionOpen">
-   <property name="text">
-    <string>Open</string>
-   </property>
-  </action>
   <action name="actionExit">
    <property name="text">
     <string>E&amp;xit</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open</string>
    </property>
   </action>
  </widget>

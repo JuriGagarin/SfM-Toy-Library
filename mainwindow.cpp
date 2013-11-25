@@ -14,6 +14,9 @@ MainWindow::MainWindow(QWidget *parent) :
     _distance = new MultiCameraPnP();
     _distance->attach(_ui->sfmWidget);
 
+    connect(_ui->pushButton_openDirectory, SIGNAL(clicked()), this, SLOT(browseDirectory()));
+    connect(_ui->actionOpen, SIGNAL(triggered()), this, SLOT(browseDirectory()));
+    connect(_ui->thumbnailWidget, SIGNAL(directoryDropped(QString)), this, SLOT(openDirectory(QString)));
     connect(_ui->horizontalSlider_scale, SIGNAL(sliderMoved(int)), _ui->sfmWidget, SLOT(setScale(int)));
 }
 
@@ -33,16 +36,6 @@ void MainWindow::on_pushButton_runSFM_clicked()
     _ui->sfmWidget->clearData();
     _recoveryThread = std::thread([&]() {_distance->RecoverDepthFromImages();});
 
-}
-
-void MainWindow::on_pushButton_openDirectory_clicked()
-{
-    openDirectory();
-}
-
-void MainWindow::on_actionOpen_triggered()
-{
-    openDirectory();
 }
 
 void MainWindow::on_actionAbout_Qt_triggered()
@@ -73,20 +66,28 @@ void MainWindow::on_actionExit_triggered()
     close();
 }
 
-void MainWindow::openDirectory()
+void MainWindow::browseDirectory()
 {
-    _images.clear();
-    _imageNames.clear();
+    QString imgsPath = QFileDialog::getExistingDirectory(this, tr("Open Images Directory"), ".");
 
-    std::string imgs_path = QFileDialog::getExistingDirectory(this, tr("Open Images Directory"), ".").toStdString();
+    if(!imgsPath.isEmpty()) { //check if selection got cancled
+        openDirectory(imgsPath);
+    }
+}
 
-    if(!imgs_path.empty()) {
+void MainWindow::openDirectory(QString path)
+{
+    qDebug() << "Open directory " << path;
+    if(!path.isEmpty()) {
+        _images.clear();
+        _imageNames.clear();
 
         const double scaleFactor = _ui->doubleSpinBox_scaleFactor->value();
 
-        qDebug() << "Downscale image to: " << scaleFactor;
 
-        open_imgs_dir(imgs_path.c_str(), _images, _imageNames, scaleFactor);
+        //TODO maybe rescaling should be done just before running sfm?
+        qDebug() << "Downscale image to: " << scaleFactor;
+        open_imgs_dir(path.toStdString().c_str(), _images, _imageNames, scaleFactor);
 
         setNrOfImages(_images.size());
 
@@ -94,10 +95,12 @@ void MainWindow::openDirectory()
             qWarning() << "can't get image files";
             _ui->pushButton_runSFM->setEnabled(false);
         } else {
-            _distance->setImages(_images,_imageNames,imgs_path);
+            _distance->setImages(_images,_imageNames,path.toStdString());
             _ui->pushButton_runSFM->setEnabled(true);
             _ui->thumbnailWidget->setImages(_images, _imageNames);
         }
+    } else {
+        qWarning() << "Calling openDirectory with empty string.";
     }
 }
 

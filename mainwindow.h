@@ -24,9 +24,6 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
-    void openDirectory();
-
     //TODO move these functions to a more suitable class
     static bool isGPUSupported();
     static bool isOpenMPEnabled();
@@ -37,6 +34,8 @@ public:
 
 public slots:
     void setStatusBarText(QString text);
+    void browseDirectory();
+    void openDirectory(QString path);
 
 private slots:
     void on_pushButton_runSFM_clicked();
@@ -44,10 +43,6 @@ private slots:
     void on_actionAbout_Qt_triggered();
 
     void on_actionExit_triggered();
-
-    void on_pushButton_openDirectory_clicked();
-
-    void on_actionOpen_triggered();
 
     void on_actionAbout_triggered();
 
